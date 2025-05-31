@@ -20,11 +20,15 @@ FROM eclipse-temurin:24-jre
 # Set the working directory for the runtime container
 WORKDIR /app
 
+# Add Datadog Java Agent
+ADD https://dtdg.co/latest-java-tracer dd-java-agent.jar
+
 # Copy the jar file from the build stage
 COPY --from=build /app/target/*.jar app.jar
 
 # Expose port 8080
 EXPOSE 8080
 
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Command to run the application with the Datadog Java Agent attached
+ENTRYPOINT ["java", "-javaagent:/app/dd-java-agent.jar", "-jar", "app.jar"]
+
